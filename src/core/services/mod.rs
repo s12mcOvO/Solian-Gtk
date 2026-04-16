@@ -6,6 +6,8 @@ pub mod notification;
 pub mod publisher;
 pub mod sticker;
 pub mod realm;
+pub mod checkin;
+pub mod extra;
 
 pub use auth::*;
 pub use storage::*;
@@ -15,3 +17,5 @@ pub use notification::*;
 pub use publisher::*;
 pub use sticker::*;
 pub use realm::*;
+pub use checkin::*;
+pub use extra::*;
