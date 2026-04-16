@@ -31,15 +31,8 @@ impl DashboardPage {
             on_settings();
         });
 
-        let logout_btn = gtk::Button::with_label("Logout");
-        logout_btn.set_valign(Align::Center);
-        logout_btn.connect_clicked(move |_| {
-            on_logout();
-        });
-
         title_bar.append(&title_label);
         title_bar.append(&settings_btn);
-        title_bar.append(&logout_btn);
 
         let main_content = ScrolledWindow::new();
         main_content.set_policy(gtk::PolicyType::Automatic, gtk::PolicyType::Automatic);

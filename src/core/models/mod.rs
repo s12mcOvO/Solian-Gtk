@@ -322,3 +322,50 @@ pub struct SnTimelinePage {
     pub next_cursor: Option<String>,
     pub prev_cursor: Option<String>,
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SnPublisher {
+    pub id: String,
+    pub name: String,
+    pub display_name: Option<String>,
+    pub bio: Option<String>,
+    pub avatar_url: Option<String>,
+    pub banner_url: Option<String>,
+    pub r#type: String,
+    pub is_owned: bool,
+    pub is_following: bool,
+    pub followers_count: Option<i64>,
+    pub posts_count: Option<i64>,
+    pub created_at: Option<String>,
+    pub realm_id: Option<String>,
+    pub realm: Option<Box<SnRealm>>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SnPublisherSubscription {
+    pub account_id: String,
+    pub account: Option<Box<SnAccount>>,
+    pub role: Option<String>,
+    pub subscribed_at: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SnStickerPack {
+    pub id: String,
+    pub name: String,
+    pub description: Option<String>,
+    pub icon_url: Option<String>,
+    pub price: Option<i64>,
+    pub is_owned: bool,
+    pub sticker_count: i32,
+    pub created_at: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SnSticker {
+    pub id: String,
+    pub pack_id: String,
+    pub name: String,
+    pub image_url: String,
+    pub aliases: Option<Vec<String>>,
+}

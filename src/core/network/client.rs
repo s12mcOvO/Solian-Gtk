@@ -163,6 +163,35 @@ impl ApiClient {
         }
     }
 
+    pub async fn patch<T: Serialize + ?Sized, R: DeserializeOwned>(
+        &self,
+        path: &str,
+        body: &T,
+    ) -> Result<R> {
+        let url = format!("{}{}", self.server_url.read().await, path);
+        let token = self.get_token().await;
+
+        debug!("PATCH {}", url);
+
+        let mut request = self.client.patch(&url).json(body);
+
+        if let Some(token) = token {
+            request = request.header("Authorization", format!("Bearer {}", token));
+        }
+
+        let response = request.send().await?;
+
+        if response.status().is_success() {
+            let parsed = response.json::<R>().await?;
+            Ok(parsed)
+        } else {
+            let status = response.status();
+            let error_text = response.text().await.unwrap_or_default();
+            error!("Request failed: {} - {}", status, error_text);
+            Err(anyhow::anyhow!("Request failed: {} - {}", status, error_text))
+        }
+    }
+
     pub async fn login(&self, username: &str, password: &str) -> Result<SnUserInfo> {
         let payload = serde_json::json!({
             "username": username,
