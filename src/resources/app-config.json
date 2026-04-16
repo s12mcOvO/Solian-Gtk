@@ -1,0 +1,21 @@
+{
+  "app_id": "app.solian.Solian",
+  "category": "Network",
+  "media": {
+    "icons": {
+      "64x64": "resources/icons/64x64.png",
+      "128x128": "resources/icons/128x128.png",
+      "256x256": "resources/icons/256x256.png",
+      "512x512": "resources/icons/512x512.png"
+    }
+  },
+  "window": {
+    "title": "Solian",
+    "width": 1200,
+    "height": 800,
+    "min_width": 360,
+    "min_height": 640,
+    "resizable": true,
+    "decorations": "system"
+  }
+}

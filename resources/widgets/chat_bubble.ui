@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="ChatBubble" parent="GtkFrame">
+    <property name="css-classes">["chat-bubble"]</property>
+    <child>
+      <object class="GtkBox" id="bubble_box">
+        <property name="orientation">vertical</property>
+        <property name="spacing">4</property>
+        <property name="margin-top">4</property>
+        <property name="margin-bottom">4</property>
+        <property name="margin-start">8</property>
+        <property name="margin-end">8</property>
+        <child>
+          <object class="GtkLabel" id="content">
+            <property name="xalign">0</property>
+            <property name="wrap">true</property>
+            <property name="visible">false</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkBox" id="media_box">
+            <property name="orientation">horizontal</property>
+            <property name="spacing">4</property>
+            <property name="visible">false</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkBox" id="reactions">
+            <property name="orientation">horizontal</property>
+            <property name="spacing">4</property>
+            <property name="visible">false</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="orientation">horizontal</property>
+            <property name="spacing">4</property>
+            <property name="halign">end</property>
+            <child>
+              <object class="GtkLabel" id="timestamp">
+                <property name="css-classes">["dim-label"]</property>
+                <property name="halign">end</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkImage" id="status_icon">
+                <property name="icon-size">small</property>
+                <property name="visible">false</property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

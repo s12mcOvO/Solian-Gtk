@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/app/solian">
+    <file preprocess="to-pixdata">widgets/account_row.ui</file>
+    <file preprocess="to-pixdata">widgets/post_card.ui</file>
+    <file preprocess="to-pixdata">widgets/chat_bubble.ui</file>
+  </gresource>
+</gresources>

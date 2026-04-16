@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="PostCard" parent="GtkFrame">
+    <property name="css-classes">["post-card"]</property>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <property name="spacing">8</property>
+        <property name="margin-top">12</property>
+        <property name="margin-bottom">12</property>
+        <property name="margin-start">12</property>
+        <property name="margin-end">12</property>
+        <child>
+          <object class="GtkBox" id="header_box">
+            <property name="orientation">horizontal</property>
+            <property name="spacing">12</property>
+            <child>
+              <object class="GtkImage" id="avatar">
+                <property name="icon-name">avatar-default</property>
+                <property name="pixel-size">40</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="orientation">vertical</property>
+                <property name="spacing">2</property>
+                <child>
+                  <object class="GtkBox">
+                    <property name="orientation">horizontal</property>
+                    <property name="spacing">8</property>
+                    <child>
+                      <object class="GtkLabel" id="display_name">
+                        <property name="xalign">0</property>
+                        <property name="weight">bold</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="username">
+                        <property name="xalign">0</property>
+                        <property name="css-classes">["dim-label"]</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="timestamp">
+                    <property name="xalign">0</property>
+                    <property name="css-classes">["dim-label"]</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkLabel" id="content">
+            <property name="xalign">0</property>
+            <property name="wrap">true</property>
+            <property name="visible">false</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkBox" id="media_box">
+            <property name="orientation">vertical</property>
+            <property name="spacing">4</property>
+            <property name="visible">false</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkStack" id="media_view">
+            <property name="visible">false</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkBox" id="action_bar">
+            <property name="orientation">horizontal</property>
+            <property name="spacing">0</property>
+            <property name="halign">start</property>
+            <property name="margin-top">8</property>
+            <child>
+              <object class="GtkButton" id="reply_btn">
+                <property name="icon-name">chat-bubble-empty</property>
+                <property name="has-frame">false</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="reply_count">
+                <property name="css-classes">["dim-label"]</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="boost_btn">
+                <property name="icon-name">repeat</property>
+                <property name="has-frame">false</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="boost_count">
+                <property name="css-classes">["dim-label"]</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="favourite_btn">
+                <property name="icon-name">star-empty</property>
+                <property name="has-frame">false</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="favourite_count">
+                <property name="css-classes">["dim-label"]</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="share_btn">
+                <property name="icon-name">share</property>
+                <property name="has-frame">false</property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>
