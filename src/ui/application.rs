@@ -9,8 +9,8 @@ use crate::core::services::NotificationService;
 use crate::core::services::PostsService;
 use crate::core::services::PublisherService;
 use crate::ui::pages::{
-    ChatPage, DashboardPage, LoginPage, NotificationsPage, PostsPage, ProfilePage, RealmsPage,
-    SearchPage, SettingsPage, ThoughtsPage, WalletsPage,
+    ChatPage, ComposePage, DashboardPage, LoginPage, NotificationsPage, PostsPage, ProfilePage,
+    RealmsPage, SearchPage, SettingsPage, ThoughtsPage, WalletsPage,
 };
 
 pub fn setup_and_run(app: &Application) -> anyhow::Result<()> {
@@ -89,7 +89,7 @@ pub fn setup_and_run(app: &Application) -> anyhow::Result<()> {
     });
     content_stack.add_named(&settings_page.widget, Some("settings"));
 
-    let posts_page = PostsPage::new(posts_service, {
+    let posts_page = PostsPage::new(posts_service.clone(), {
         let stack = content_stack.clone();
         move || stack.set_visible_child_name("dashboard")
     });
@@ -138,6 +138,12 @@ pub fn setup_and_run(app: &Application) -> anyhow::Result<()> {
         move || stack.set_visible_child_name("dashboard")
     });
     content_stack.add_named(&notifications_page.widget, Some("notifications"));
+
+    let compose_page = ComposePage::new(posts_service.clone(), {
+        let stack = content_stack.clone();
+        move || stack.set_visible_child_name("dashboard")
+    });
+    content_stack.add_named(&compose_page.widget, Some("compose"));
 
     let main_box = gtk::Box::new(gtk::Orientation::Vertical, 0);
     main_box.append(&content_stack);
