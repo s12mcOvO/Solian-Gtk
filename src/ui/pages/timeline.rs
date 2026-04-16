@@ -86,12 +86,24 @@ impl TimelinePage {
         sidebar.append(&logo_label);
         sidebar.append(&nav_box);
         sidebar.append(&compose_btn);
+        sidebar.append(&user_box);
 
         let main_area = GtkBox::new(gtk::Orientation::Vertical, 0);
 
         let header = GtkBox::new(gtk::Orientation::Horizontal, 0);
         header.add_css_class("titlebar");
         header.set_height_request(56);
+
+        let title_label = Label::new(Some("Home"));
+        title_label.add_css_class("title");
+        title_label.set_halign(Align::Center);
+        title_label.set_hexpand(true);
+
+        let search_btn = gtk::Button::from_icon_name("system-search-symbolic");
+        search_btn.set_valign(Align::Center);
+
+        header.append(&title_label);
+        header.append(&search_btn);
 
         let tab_box = GtkBox::new(gtk::Orientation::Horizontal, 0);
         tab_box.set_hexpand(true);
@@ -104,8 +116,6 @@ impl TimelinePage {
         tab_box.append(&home_tab);
         tab_box.append(&local_tab);
         tab_box.append(&federated_tab);
-
-        header.append(&tab_box);
 
         let feed_scroll = ScrolledWindow::new();
         feed_scroll.set_policy(gtk::PolicyType::Automatic, gtk::PolicyType::Automatic);
@@ -157,6 +167,7 @@ impl TimelinePage {
         feed_scroll.set_child(Some(&feed_box));
 
         main_area.append(&header);
+        main_area.append(&tab_box);
         main_area.append(&feed_scroll);
 
         widget.append(&sidebar);
@@ -275,22 +286,4 @@ fn create_post_card(author: &str, content: &str, time: &str, likes: &str, replie
     card.append(&actions);
 
     card
-}
-
-fn create_post_card_from_snpost(post: &SnPost) -> GtkBox {
-    let author_name = post
-        .author
-        .as_ref()
-        .and_then(|a| a.display_name.clone().or_else(|| Some(a.name.clone())))
-        .unwrap_or_else(|| "Unknown".to_string());
-
-    let content = post.content.clone().unwrap_or_default();
-    let time = post
-        .created_at
-        .clone()
-        .unwrap_or_else(|| "Unknown".to_string());
-    let likes = post.favourites_count.unwrap_or(0).to_string();
-    let replies = post.replies_count.unwrap_or(0).to_string();
-
-    create_post_card(&author_name, &content, &time, &likes, &replies)
 }
