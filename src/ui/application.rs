@@ -5,17 +5,21 @@ use tracing::info;
 
 use crate::core::services::AuthService;
 use crate::core::services::ChatService;
+use crate::core::services::NotificationService;
 use crate::core::services::PostsService;
+use crate::core::services::PublisherService;
 use crate::ui::pages::{
-    ChatPage, DashboardPage, LoginPage, PostsPage, RealmsPage, SettingsPage, ThoughtsPage,
-    WalletsPage,
+    ChatPage, DashboardPage, LoginPage, NotificationsPage, PostsPage, ProfilePage, RealmsPage,
+    SearchPage, SettingsPage, ThoughtsPage, WalletsPage,
 };
 
 pub fn setup_and_run(app: &Application) -> anyhow::Result<()> {
     let api_client = Arc::new(crate::core::network::ApiClient::new());
     let auth_service = Arc::new(AuthService::new(api_client.clone()));
     let chat_service = Arc::new(ChatService::new(api_client.clone()));
-    let posts_service = Arc::new(PostsService::new(api_client));
+    let posts_service = Arc::new(PostsService::new(api_client.clone()));
+    let notification_service = Arc::new(NotificationService::new(api_client.clone()));
+    let publisher_service = Arc::new(PublisherService::new(api_client));
 
     let main_window = adw::ApplicationWindow::builder()
         .application(app)
@@ -108,6 +112,32 @@ pub fn setup_and_run(app: &Application) -> anyhow::Result<()> {
         move || stack.set_visible_child_name("dashboard")
     });
     content_stack.add_named(&wallets_page.widget, Some("wallets"));
+
+    let profile_page = ProfilePage::new(
+        publisher_service.clone(),
+        {
+            let stack = content_stack.clone();
+            move || stack.set_visible_child_name("dashboard")
+        },
+        || {},
+    );
+    content_stack.add_named(&profile_page.widget, Some("profile"));
+
+    let search_page = SearchPage::new(
+        publisher_service.clone(),
+        {
+            let stack = content_stack.clone();
+            move || stack.set_visible_child_name("dashboard")
+        },
+        |_| {},
+    );
+    content_stack.add_named(&search_page.widget, Some("search"));
+
+    let notifications_page = NotificationsPage::new(notification_service, {
+        let stack = content_stack.clone();
+        move || stack.set_visible_child_name("dashboard")
+    });
+    content_stack.add_named(&notifications_page.widget, Some("notifications"));
 
     let main_box = gtk::Box::new(gtk::Orientation::Vertical, 0);
     main_box.append(&content_stack);

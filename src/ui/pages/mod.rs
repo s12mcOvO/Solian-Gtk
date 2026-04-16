@@ -6,6 +6,9 @@ pub mod posts;
 pub mod realms;
 pub mod thoughts;
 pub mod wallets;
+pub mod profile;
+pub mod search;
+pub mod notifications;
 
 pub use login::LoginPage;
 pub use dashboard::DashboardPage;
@@ -15,3 +18,6 @@ pub use posts::PostsPage;
 pub use realms::RealmsPage;
 pub use thoughts::ThoughtsPage;
 pub use wallets::WalletsPage;
+pub use profile::ProfilePage;
+pub use search::SearchPage;
+pub use notifications::NotificationsPage;
