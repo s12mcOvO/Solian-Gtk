@@ -22,6 +22,24 @@ impl PostsService {
         Ok(timeline)
     }
 
+    pub async fn get_home_timeline(&self, take: i32) -> Result<SnTimelinePage> {
+        let path = format!("/sphere/timeline?take={}&filter=home", take);
+        let timeline: SnTimelinePage = self.client.get(&path).await?.json().await?;
+        Ok(timeline)
+    }
+
+    pub async fn get_local_timeline(&self, take: i32) -> Result<SnTimelinePage> {
+        let path = format!("/sphere/timeline?take={}&filter=local", take);
+        let timeline: SnTimelinePage = self.client.get(&path).await?.json().await?;
+        Ok(timeline)
+    }
+
+    pub async fn get_federated_timeline(&self, take: i32) -> Result<SnTimelinePage> {
+        let path = format!("/sphere/timeline?take={}&filter=federated", take);
+        let timeline: SnTimelinePage = self.client.get(&path).await?.json().await?;
+        Ok(timeline)
+    }
+
     pub async fn get_posts(&self, take: i32, offset: i32) -> Result<Vec<SnPost>> {
         let path = format!("/sphere/posts?take={}&offset={}", take, offset);
         let posts: Vec<SnPost> = self.client.get(&path).await?.json().await?;

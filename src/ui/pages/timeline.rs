@@ -1,7 +1,8 @@
 use gtk::prelude::*;
-use gtk::{Align, Box as GtkBox, Button, Entry, Image, Label, ListBox, ListBoxRow, ScrolledWindow};
+use gtk::{Align, Box as GtkBox, Button, Entry, Image, Label, ScrolledWindow};
 use std::sync::Arc;
 
+use crate::core::models::SnPost;
 use crate::core::services::AuthService;
 use crate::core::services::PostsService;
 
@@ -9,6 +10,7 @@ pub struct TimelinePage {
     pub widget: GtkBox,
     posts_service: Arc<PostsService>,
     auth_service: Arc<AuthService>,
+    current_filter: std::cell::Cell<String>,
 }
 
 impl TimelinePage {
@@ -171,6 +173,7 @@ impl TimelinePage {
             widget,
             posts_service,
             auth_service,
+            current_filter: std::cell::Cell::new("home".to_string()),
         }
     }
 }
@@ -279,4 +282,22 @@ fn create_post_card(author: &str, content: &str, time: &str, likes: &str, replie
     card.append(&actions);
 
     card
+}
+
+fn create_post_card_from_snpost(post: &SnPost) -> GtkBox {
+    let author_name = post
+        .author
+        .as_ref()
+        .and_then(|a| a.display_name.clone().or_else(|| Some(a.name.clone())))
+        .unwrap_or_else(|| "Unknown".to_string());
+
+    let content = post.content.clone().unwrap_or_default();
+    let time = post
+        .created_at
+        .clone()
+        .unwrap_or_else(|| "Unknown".to_string());
+    let likes = post.favourites_count.unwrap_or(0).to_string();
+    let replies = post.replies_count.unwrap_or(0).to_string();
+
+    create_post_card(&author_name, &content, &time, &likes, &replies)
 }
