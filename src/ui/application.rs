@@ -150,7 +150,7 @@ pub fn setup_and_run(app: &Application) -> anyhow::Result<()> {
 
     content_stack.set_visible_child_name("timeline");
     main_window.present();
-    info!("GTK4 UI started successfully");
+    info!("GTK4 UI started successfully - Solian Desktop Client");
 
     Ok(())
 }
