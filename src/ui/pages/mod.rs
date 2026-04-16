@@ -9,6 +9,7 @@ pub mod realms;
 pub mod search;
 pub mod settings;
 pub mod thoughts;
+pub mod timeline;
 pub mod wallets;
 
 pub use chat::ChatPage;
@@ -22,4 +23,5 @@ pub use realms::RealmsPage;
 pub use search::SearchPage;
 pub use settings::SettingsPage;
 pub use thoughts::ThoughtsPage;
+pub use timeline::TimelinePage;
 pub use wallets::WalletsPage;

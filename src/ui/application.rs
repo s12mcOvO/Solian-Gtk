@@ -9,8 +9,8 @@ use crate::core::services::NotificationService;
 use crate::core::services::PostsService;
 use crate::core::services::PublisherService;
 use crate::ui::pages::{
-    ChatPage, ComposePage, DashboardPage, LoginPage, NotificationsPage, PostsPage, ProfilePage,
-    RealmsPage, SearchPage, SettingsPage, ThoughtsPage, WalletsPage,
+    ChatPage, ComposePage, LoginPage, NotificationsPage, PostsPage, ProfilePage, RealmsPage,
+    SearchPage, SettingsPage, ThoughtsPage, TimelinePage, WalletsPage,
 };
 
 pub fn setup_and_run(app: &Application) -> anyhow::Result<()> {
@@ -24,7 +24,7 @@ pub fn setup_and_run(app: &Application) -> anyhow::Result<()> {
     let main_window = adw::ApplicationWindow::builder()
         .application(app)
         .title("Solian")
-        .default_width(1200)
+        .default_width(1280)
         .default_height(800)
         .build();
 
@@ -36,15 +36,21 @@ pub fn setup_and_run(app: &Application) -> anyhow::Result<()> {
         &main_window,
         Arc::new({
             let stack = content_stack.clone();
-            move || stack.set_visible_child_name("dashboard")
+            move || stack.set_visible_child_name("timeline")
         }),
     );
     content_stack.add_named(&login_page.widget, Some("login"));
 
-    let dashboard_page = DashboardPage::new(
+    let timeline_page = TimelinePage::new(
+        posts_service.clone(),
+        auth_service.clone(),
         {
             let stack = content_stack.clone();
-            move || stack.set_visible_child_name("login")
+            move || stack.set_visible_child_name("timeline")
+        },
+        {
+            let stack = content_stack.clone();
+            move || stack.set_visible_child_name("notifications")
         },
         {
             let stack = content_stack.clone();
@@ -52,32 +58,24 @@ pub fn setup_and_run(app: &Application) -> anyhow::Result<()> {
         },
         {
             let stack = content_stack.clone();
+            move || stack.set_visible_child_name("profile")
+        },
+        {
+            let stack = content_stack.clone();
             move || stack.set_visible_child_name("settings")
         },
         {
             let stack = content_stack.clone();
-            move || stack.set_visible_child_name("posts")
-        },
-        {
-            let stack = content_stack.clone();
-            move || stack.set_visible_child_name("realms")
-        },
-        {
-            let stack = content_stack.clone();
-            move || stack.set_visible_child_name("thoughts")
-        },
-        {
-            let stack = content_stack.clone();
-            move || stack.set_visible_child_name("wallets")
+            move || stack.set_visible_child_name("login")
         },
     );
-    content_stack.add_named(&dashboard_page.widget, Some("dashboard"));
+    content_stack.add_named(&timeline_page.widget, Some("timeline"));
 
     let chat_page = ChatPage::new(
         chat_service,
         {
             let stack = content_stack.clone();
-            move || stack.set_visible_child_name("dashboard")
+            move || stack.set_visible_child_name("timeline")
         },
         |_room_id| {},
     );
@@ -85,31 +83,31 @@ pub fn setup_and_run(app: &Application) -> anyhow::Result<()> {
 
     let settings_page = SettingsPage::new({
         let stack = content_stack.clone();
-        move || stack.set_visible_child_name("dashboard")
+        move || stack.set_visible_child_name("timeline")
     });
     content_stack.add_named(&settings_page.widget, Some("settings"));
 
     let posts_page = PostsPage::new(posts_service.clone(), {
         let stack = content_stack.clone();
-        move || stack.set_visible_child_name("dashboard")
+        move || stack.set_visible_child_name("timeline")
     });
     content_stack.add_named(&posts_page.widget, Some("posts"));
 
     let realms_page = RealmsPage::new({
         let stack = content_stack.clone();
-        move || stack.set_visible_child_name("dashboard")
+        move || stack.set_visible_child_name("timeline")
     });
     content_stack.add_named(&realms_page.widget, Some("realms"));
 
     let thoughts_page = ThoughtsPage::new({
         let stack = content_stack.clone();
-        move || stack.set_visible_child_name("dashboard")
+        move || stack.set_visible_child_name("timeline")
     });
     content_stack.add_named(&thoughts_page.widget, Some("thoughts"));
 
     let wallets_page = WalletsPage::new({
         let stack = content_stack.clone();
-        move || stack.set_visible_child_name("dashboard")
+        move || stack.set_visible_child_name("timeline")
     });
     content_stack.add_named(&wallets_page.widget, Some("wallets"));
 
@@ -117,7 +115,7 @@ pub fn setup_and_run(app: &Application) -> anyhow::Result<()> {
         publisher_service.clone(),
         {
             let stack = content_stack.clone();
-            move || stack.set_visible_child_name("dashboard")
+            move || stack.set_visible_child_name("timeline")
         },
         || {},
     );
@@ -127,7 +125,7 @@ pub fn setup_and_run(app: &Application) -> anyhow::Result<()> {
         publisher_service.clone(),
         {
             let stack = content_stack.clone();
-            move || stack.set_visible_child_name("dashboard")
+            move || stack.set_visible_child_name("timeline")
         },
         |_| {},
     );
@@ -135,13 +133,13 @@ pub fn setup_and_run(app: &Application) -> anyhow::Result<()> {
 
     let notifications_page = NotificationsPage::new(notification_service, {
         let stack = content_stack.clone();
-        move || stack.set_visible_child_name("dashboard")
+        move || stack.set_visible_child_name("timeline")
     });
     content_stack.add_named(&notifications_page.widget, Some("notifications"));
 
     let compose_page = ComposePage::new(posts_service.clone(), {
         let stack = content_stack.clone();
-        move || stack.set_visible_child_name("dashboard")
+        move || stack.set_visible_child_name("timeline")
     });
     content_stack.add_named(&compose_page.widget, Some("compose"));
 
@@ -150,7 +148,7 @@ pub fn setup_and_run(app: &Application) -> anyhow::Result<()> {
 
     main_window.set_content(Some(&main_box));
 
-    content_stack.set_visible_child_name("dashboard");
+    content_stack.set_visible_child_name("timeline");
     main_window.present();
     info!("GTK4 UI started successfully");
 
