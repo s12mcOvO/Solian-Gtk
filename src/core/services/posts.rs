@@ -52,16 +52,24 @@ impl PostsService {
         Ok(post)
     }
 
-    pub async fn create_post(&self, content: &str, visibility: Option<&str>) -> Result<SnPost> {
+    pub async fn get_post_replies(&self, post_id: &str, take: i32) -> Result<Vec<SnPost>> {
+        let path = format!("/sphere/posts/{}/replies?take={}", post_id, take);
+        let replies: Vec<SnPost> = self.client.get(&path).await?.json().await?;
+        Ok(replies)
+    }
+
+    pub async fn create_post(&self, content: &str, visibility: Option<&str>, reply_to: Option<&str>) -> Result<SnPost> {
         #[derive(serde::Serialize)]
         struct CreatePostRequest<'a> {
             content: &'a str,
             visibility: Option<&'a str>,
+            reply_to_id: Option<&'a str>,
         }
         
         let request = CreatePostRequest {
             content,
             visibility,
+            reply_to_id: reply_to,
         };
         
         let post: SnPost = self.client.post("/sphere/posts", &request).await?;
@@ -70,6 +78,27 @@ impl PostsService {
 
     pub async fn delete_post(&self, post_id: &str) -> Result<()> {
         let path = format!("/sphere/posts/{}", post_id);
+        self.client.delete(&path).await
+    }
+
+    pub async fn like_post(&self, post_id: &str) -> Result<()> {
+        let path = format!("/sphere/posts/{}/favourite", post_id);
+        self.client.post::<(), ()>(&path, &()).await
+    }
+
+    pub async fn unlike_post(&self, post_id: &str) -> Result<()> {
+        let path = format!("/sphere/posts/{}/favourite", post_id);
+        self.client.delete(&path).await
+    }
+
+    pub async fn reblog_post(&self, post_id: &str) -> Result<SnPost> {
+        let path = format!("/sphere/posts/{}/boost", post_id);
+        let post: SnPost = self.client.post(&path, &()).await?;
+        Ok(post)
+    }
+
+    pub async fn unreblog_post(&self, post_id: &str) -> Result<()> {
+        let path = format!("/sphere/posts/{}/boost", post_id);
         self.client.delete(&path).await
     }
 
@@ -82,5 +111,26 @@ impl PostsService {
         let path = format!("/sphere/posts/{}/reactions", post_id);
         let _ = self.client.post::<ReactionRequest, ()>(&path, &ReactionRequest { emoji: emoji.to_string() }).await;
         Ok(())
+    }
+
+    pub async fn bookmark_post(&self, post_id: &str) -> Result<()> {
+        let path = format!("/sphere/posts/{}/bookmark", post_id);
+        self.client.post::<(), ()>(&path, &()).await
+    }
+
+    pub async fn unbookmark_post(&self, post_id: &str) -> Result<()> {
+        let path = format!("/sphere/posts/{}/bookmark", post_id);
+        self.client.delete(&path).await
+    }
+
+    pub async fn get_bookmarks(&self, take: i32, offset: i32) -> Result<Vec<SnPost>> {
+        let path = format!("/sphere/posts/bookmarks?take={}&offset={}", take, offset);
+        let posts: Vec<SnPost> = self.client.get(&path).await?.json().await?;
+        Ok(posts)
+    }
+
+    pub async fn get_drafts(&self) -> Result<Vec<SnPost>> {
+        let posts: Vec<SnPost> = self.client.get("/sphere/posts/drafts").await?.json().await?;
+        Ok(posts)
     }
 }

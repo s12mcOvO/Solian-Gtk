@@ -58,6 +58,11 @@ pub struct SnPost {
     pub poll: Option<SnPoll>,
     pub url: Option<String>,
     pub uri: Option<String>,
+    pub in_reply_to_id: Option<String>,
+    pub in_reply_to_account_id: Option<String>,
+    pub reblog: Option<Box<SnPost>>,
+    pub pinned: Option<bool>,
+    pub bookmarked: Option<bool>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -146,6 +151,9 @@ pub struct SnRealm {
     pub owner: Option<Box<SnAccount>>,
     pub created_at: Option<String>,
     pub followers_count: Option<i64>,
+    pub is_following: Option<bool>,
+    pub is_member: Option<bool>,
+    pub posts_count: Option<i64>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
