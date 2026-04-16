@@ -64,10 +64,6 @@ pub fn setup_and_run(app: &Application) -> anyhow::Result<()> {
             let stack = content_stack.clone();
             move || stack.set_visible_child_name("settings")
         },
-        {
-            let stack = content_stack.clone();
-            move || stack.set_visible_child_name("login")
-        },
     );
     content_stack.add_named(&timeline_page.widget, Some("timeline"));
 
@@ -81,10 +77,16 @@ pub fn setup_and_run(app: &Application) -> anyhow::Result<()> {
     );
     content_stack.add_named(&chat_page.widget, Some("chat"));
 
-    let settings_page = SettingsPage::new({
-        let stack = content_stack.clone();
-        move || stack.set_visible_child_name("timeline")
-    });
+    let settings_page = SettingsPage::new(
+        {
+            let stack = content_stack.clone();
+            move || stack.set_visible_child_name("timeline")
+        },
+        {
+            let stack = content_stack.clone();
+            move || stack.set_visible_child_name("login")
+        },
+    );
     content_stack.add_named(&settings_page.widget, Some("settings"));
 
     let posts_page = PostsPage::new(posts_service.clone(), {

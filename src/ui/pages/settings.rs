@@ -1,12 +1,12 @@
 use gtk::prelude::*;
-use gtk::{Align, Box as GtkBox, Label, ScrolledWindow, Switch};
+use gtk::{Align, Box as GtkBox, Button, Label, ScrolledWindow, Switch};
 
 pub struct SettingsPage {
     pub widget: GtkBox,
 }
 
 impl SettingsPage {
-    pub fn new(on_back: impl Fn() + 'static) -> Self {
+    pub fn new(on_back: impl Fn() + 'static, on_logout: impl Fn() + 'static) -> Self {
         let widget = GtkBox::new(gtk::Orientation::Vertical, 0);
 
         let title_bar = GtkBox::new(gtk::Orientation::Horizontal, 0);
@@ -62,6 +62,14 @@ impl SettingsPage {
         version_label.set_halign(Align::Start);
         version_label.set_margin_top(8);
 
+        let logout_btn = Button::with_label("Logout");
+        logout_btn.add_css_class("destructive-action");
+        logout_btn.set_margin_top(24);
+        logout_btn.set_hexpand(true);
+        logout_btn.connect_clicked(move |_| {
+            on_logout();
+        });
+
         content_box.append(&appearance_label);
         content_box.append(&dark_mode_box);
         content_box.append(&animations_box);
@@ -70,6 +78,7 @@ impl SettingsPage {
         content_box.append(&notifications_box);
         content_box.append(&about_label);
         content_box.append(&version_label);
+        content_box.append(&logout_btn);
 
         main_content.set_child(Some(&content_box));
 

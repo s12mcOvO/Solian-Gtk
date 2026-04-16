@@ -22,7 +22,6 @@ impl TimelinePage {
         on_messages: impl Fn() + 'static,
         on_profile: impl Fn() + 'static,
         on_settings: impl Fn() + 'static,
-        on_logout: impl Fn() + 'static,
     ) -> Self {
         let widget = GtkBox::new(gtk::Orientation::Horizontal, 0);
 
@@ -65,11 +64,6 @@ impl TimelinePage {
         compose_btn.set_size_request(-1, 44);
         compose_btn.set_margin_top(16);
 
-        let logout_btn = Button::with_label("Logout");
-        logout_btn.add_css_class("destructive-action");
-        logout_btn.set_margin_top(24);
-        logout_btn.connect_clicked(move |_| on_logout());
-
         let user_box = GtkBox::new(gtk::Orientation::Horizontal, 8);
         user_box.set_margin_top(16);
 
@@ -92,7 +86,6 @@ impl TimelinePage {
         sidebar.append(&logo_label);
         sidebar.append(&nav_box);
         sidebar.append(&compose_btn);
-        sidebar.append(&logout_btn);
 
         let main_area = GtkBox::new(gtk::Orientation::Vertical, 0);
 
