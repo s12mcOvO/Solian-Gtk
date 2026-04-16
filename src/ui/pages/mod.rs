@@ -1,6 +1,9 @@
 pub mod chat;
+pub mod checkin;
 pub mod compose;
 pub mod dashboard;
+pub mod extras;
+pub mod friends;
 pub mod login;
 pub mod notifications;
 pub mod posts;
@@ -13,8 +16,11 @@ pub mod timeline;
 pub mod wallets;
 
 pub use chat::ChatPage;
+pub use checkin::CheckInPage;
 pub use compose::ComposePage;
 pub use dashboard::DashboardPage;
+pub use extras::{CountdownPage, RssPage};
+pub use friends::{BlocklistPage, FriendsPage};
 pub use login::LoginPage;
 pub use notifications::NotificationsPage;
 pub use posts::PostsPage;
