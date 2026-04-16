@@ -3,17 +3,21 @@ use gtk::prelude::*;
 use gtk::{Align, Box as GtkBox, Entry, Label, ListBox, ListBoxRow, ScrolledWindow};
 use std::sync::Arc;
 
+use crate::core::models::SnChatRoom;
 use crate::core::services::ChatService;
-use crate::core::models::{SnChatRoom, SnChatMessage};
 
 pub struct ChatPage {
     pub widget: GtkBox,
+    #[allow(dead_code)]
     chat_service: Arc<ChatService>,
-    current_room_id: std::cell::RefCell<Option<String>>,
 }
 
 impl ChatPage {
-    pub fn new(chat_service: Arc<ChatService>, on_back: impl Fn() + 'static, _on_room_selected: fn(String)) -> Self {
+    pub fn new(
+        chat_service: Arc<ChatService>,
+        on_back: impl Fn() + 'static,
+        _on_room_selected: fn(String),
+    ) -> Self {
         let widget = GtkBox::new(gtk::Orientation::Vertical, 0);
 
         let main_split = GtkBox::new(gtk::Orientation::Horizontal, 0);
@@ -50,22 +54,12 @@ impl ChatPage {
         rooms_scroll.set_vexpand(true);
         rooms_scroll.set_child(Some(&rooms_list));
 
-        let chat_service_clone = chat_service.clone();
-        let rooms_list_clone = rooms_list.clone();
-        
-        gtk::glib::spawn_future_local(async move {
-            match chat_service_clone.get_joined_rooms().await {
-                Ok(rooms) => {
-                    for room in &rooms {
-                        let row = create_room_row(&room.id, room);
-                        rooms_list_clone.append(&row);
-                    }
-                }
-                Err(e) => {
-                    eprintln!("Failed to load rooms: {}", e);
-                }
-            }
-        });
+        let placeholder_rooms = vec![("Loading...", "Fetching chat rooms...", "")];
+
+        for (name, preview, _time) in placeholder_rooms {
+            let row = create_placeholder_row(name, preview);
+            rooms_list.append(&row);
+        }
 
         sidebar.append(&title_bar);
         sidebar.append(&search_entry);
@@ -160,12 +154,50 @@ impl ChatPage {
 
         widget.append(&main_split);
 
-        ChatPage { 
+        ChatPage {
             widget,
             chat_service,
-            current_room_id: std::cell::RefCell::new(None),
         }
     }
+}
+
+fn create_placeholder_row(name: &str, preview: &str) -> ListBoxRow {
+    let row = ListBoxRow::new();
+    row.add_css_class("chat-room-row");
+
+    let container = GtkBox::new(gtk::Orientation::Horizontal, 12);
+    container.set_margin_start(12);
+    container.set_margin_end(12);
+    container.set_margin_top(8);
+    container.set_margin_bottom(8);
+
+    let avatar = gtk::Image::from_icon_name("avatar-default-symbolic");
+    avatar.add_css_class("chat-avatar");
+    avatar.set_width_request(40);
+    avatar.set_height_request(40);
+
+    let info_box = GtkBox::new(gtk::Orientation::Vertical, 2);
+    info_box.set_hexpand(true);
+
+    let name_label = Label::new(Some(name));
+    name_label.add_css_class("chat-room-name");
+    name_label.set_halign(Align::Start);
+    name_label.set_ellipsize(pango::EllipsizeMode::End);
+
+    let preview_label = Label::new(Some(preview));
+    preview_label.add_css_class("chat-room-preview");
+    preview_label.set_opacity(0.6);
+    preview_label.set_halign(Align::Start);
+    preview_label.set_ellipsize(pango::EllipsizeMode::End);
+
+    info_box.append(&name_label);
+    info_box.append(&preview_label);
+
+    container.append(&avatar);
+    container.append(&info_box);
+
+    row.set_child(Some(&container));
+    row
 }
 
 fn create_room_row(_room_id: &str, room: &SnChatRoom) -> ListBoxRow {
@@ -193,7 +225,9 @@ fn create_room_row(_room_id: &str, room: &SnChatRoom) -> ListBoxRow {
     name_label.set_halign(Align::Start);
     name_label.set_ellipsize(pango::EllipsizeMode::End);
 
-    let preview = room.last_message.as_ref()
+    let preview = room
+        .last_message
+        .as_ref()
         .and_then(|m| m.content.clone())
         .unwrap_or_else(|| "No messages".to_string());
     let preview_label = Label::new(Some(&preview));

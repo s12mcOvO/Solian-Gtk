@@ -167,6 +167,7 @@ impl ApiClient {
         let payload = serde_json::json!({
             "username": username,
             "password": password,
+            "grant_type": "password",
         });
 
         let url = format!("{}/padlock/auth/token", self.server_url.read().await);

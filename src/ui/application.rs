@@ -114,7 +114,7 @@ pub fn setup_and_run(app: &Application) -> anyhow::Result<()> {
 
     main_window.set_content(Some(&main_box));
 
-    content_stack.set_visible_child_name("login");
+    content_stack.set_visible_child_name("dashboard");
     main_window.present();
     info!("GTK4 UI started successfully");
 

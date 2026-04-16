@@ -68,7 +68,7 @@ impl LoginPage {
 
         let username_clone = username_entry.clone();
         let password_clone = password_entry.clone();
-        
+
         let auth_service_clone = auth_service.clone();
         let on_login_success_clone = on_login_success.clone();
 
@@ -88,28 +88,25 @@ impl LoginPage {
             login_button_for_state.set_sensitive(false);
 
             let auth_service_inner = auth_service_clone.clone();
-            let on_success = on_login_success_clone.clone();
             let error_label_err = error_label_for_click.clone();
             let spinner_err = spinner_for_click.clone();
             let login_btn_err = login_button_for_state.clone();
-            let username_err = username_clone.clone();
 
-            gtk::glib::spawn_future_local(async move {
-                match auth_service_inner.login(&username_err.text().to_string(), &password_clone.text().to_string()).await {
-                    Ok(_user) => {
-                        info!("Login successful");
-                        on_success();
-                    }
-                    Err(e) => {
-                        eprintln!("Login failed: {}", e);
-                        error_label_err.set_text("Login failed. Please check your credentials.");
-                        error_label_err.set_visible(true);
-                        spinner_err.set_visible(false);
-                        spinner_err.stop();
-                        login_btn_err.set_sensitive(true);
-                    }
+            let rt = tokio::runtime::Runtime::new().unwrap();
+            match rt.block_on(auth_service_inner.login(&username, &password)) {
+                Ok(_user) => {
+                    info!("Login successful");
+                    on_login_success_clone();
                 }
-            });
+                Err(e) => {
+                    eprintln!("Login failed: {}", e);
+                    error_label_err.set_text("Login failed. Please check your credentials.");
+                    error_label_err.set_visible(true);
+                    spinner_err.set_visible(false);
+                    spinner_err.stop();
+                    login_btn_err.set_sensitive(true);
+                }
+            }
         });
 
         content_box.append(&header);

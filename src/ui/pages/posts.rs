@@ -2,11 +2,12 @@ use gtk::prelude::*;
 use gtk::{Align, Box as GtkBox, Label, ScrolledWindow};
 use std::sync::Arc;
 
-use crate::core::services::PostsService;
 use crate::core::models::SnPost;
+use crate::core::services::PostsService;
 
 pub struct PostsPage {
     pub widget: GtkBox,
+    #[allow(dead_code)]
     posts_service: Arc<PostsService>,
 }
 
@@ -46,33 +47,66 @@ impl PostsPage {
         posts_box.set_halign(Align::Center);
         posts_box.set_width_request(600);
 
-        let posts_service_clone = posts_service.clone();
-        let posts_box_clone = posts_box.clone();
-        
-        gtk::glib::spawn_future_local(async move {
-            match posts_service_clone.get_timeline(None, 20).await {
-                Ok(timeline) => {
-                    for post in &timeline.items {
-                        let post_card = create_post_card(post);
-                        posts_box_clone.append(&post_card);
-                    }
-                }
-                Err(e) => {
-                    eprintln!("Failed to load posts: {}", e);
-                }
-            }
-        });
+        let placeholder_posts = vec![("Loading...", "Fetching timeline from API...", "")];
+
+        for (author, content, time) in placeholder_posts {
+            let post_card = create_placeholder_card(author, content, time);
+            posts_box.append(&post_card);
+        }
 
         main_content.set_child(Some(&posts_box));
 
         widget.append(&title_bar);
         widget.append(&main_content);
 
-        PostsPage { 
+        PostsPage {
             widget,
             posts_service,
         }
     }
+}
+
+fn create_placeholder_card(author: &str, content: &str, time: &str) -> GtkBox {
+    let card = GtkBox::new(gtk::Orientation::Vertical, 12);
+    card.add_css_class("post-card");
+    card.set_margin_start(16);
+    card.set_margin_end(16);
+    card.set_margin_top(16);
+    card.set_margin_bottom(16);
+
+    let header = GtkBox::new(gtk::Orientation::Horizontal, 12);
+
+    let avatar = gtk::Image::from_icon_name("avatar-default-symbolic");
+    avatar.set_width_request(40);
+    avatar.set_height_request(40);
+
+    let author_info = GtkBox::new(gtk::Orientation::Vertical, 2);
+
+    let author_label = Label::new(Some(author));
+    author_label.add_css_class("post-author");
+    author_label.set_halign(Align::Start);
+
+    let time_label = Label::new(Some(time));
+    time_label.add_css_class("post-time");
+    time_label.set_opacity(0.6);
+    time_label.set_halign(Align::Start);
+
+    author_info.append(&author_label);
+    author_info.append(&time_label);
+
+    header.append(&avatar);
+    header.append(&author_info);
+    header.set_hexpand(true);
+
+    let content_label = Label::new(Some(content));
+    content_label.set_wrap(true);
+    content_label.set_xalign(0.0);
+    content_label.set_vexpand(true);
+
+    card.append(&header);
+    card.append(&content_label);
+
+    card
 }
 
 fn create_post_card(post: &SnPost) -> GtkBox {
@@ -91,7 +125,9 @@ fn create_post_card(post: &SnPost) -> GtkBox {
 
     let author_info = GtkBox::new(gtk::Orientation::Vertical, 2);
 
-    let author_name = post.author.as_ref()
+    let author_name = post
+        .author
+        .as_ref()
         .and_then(|a| a.display_name.clone().or_else(|| Some(a.name.clone())))
         .unwrap_or_else(|| "Unknown".to_string());
     let author_label = Label::new(Some(&author_name));
