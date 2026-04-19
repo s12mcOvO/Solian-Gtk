@@ -8,6 +8,7 @@ pub mod sticker;
 pub mod realm;
 pub mod checkin;
 pub mod extra;
+pub mod oauth;
 
 pub use auth::*;
 pub use storage::*;
@@ -19,3 +20,4 @@ pub use sticker::*;
 pub use realm::*;
 pub use checkin::*;
 pub use extra::*;
+pub use oauth::*;

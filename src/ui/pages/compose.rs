@@ -58,7 +58,9 @@ impl ComposePage {
         text_view.set_margin_start(8);
         text_view.set_margin_end(8);
 
-        let placeholder_label = Label::new(Some("What's on your mind?"));
+        let placeholder_label = Label::new(Some(
+            "What's on your mind? Use **bold**, *italic*, #tags, @mentions",
+        ));
         placeholder_label.set_opacity(0.5);
         placeholder_label.set_margin_start(12);
         placeholder_label.set_margin_top(12);
@@ -69,14 +71,29 @@ impl ComposePage {
         options_bar.set_margin_top(8);
 
         let image_btn = gtk::Button::from_icon_name("image-x-generic-symbolic");
+
         let emoji_btn = gtk::Button::from_icon_name("emoji-object-symbolic");
+
         let poll_btn = gtk::Button::from_icon_name("poll-symbolic");
-        let sticker_btn = gtk::Button::from_icon_name("Stickers-symbolic");
+
+        let sticker_btn = gtk::Button::from_icon_name("face-cool-symbolic");
+
+        let location_btn = gtk::Button::from_icon_name("mark-location-symbolic");
+
+        let schedule_btn = gtk::Button::from_icon_name("office-calendar-symbolic");
+
+        let sensitive_btn = gtk::Button::from_icon_name("image-eye-symbolic");
+
+        let visibility_btn = gtk::Button::from_icon_name("unlocked-symbolic");
 
         options_bar.append(&image_btn);
         options_bar.append(&emoji_btn);
         options_bar.append(&poll_btn);
         options_bar.append(&sticker_btn);
+        options_bar.append(&location_btn);
+        options_bar.append(&schedule_btn);
+        options_bar.append(&sensitive_btn);
+        options_bar.append(&visibility_btn);
 
         input_area.append(&options_bar);
 
